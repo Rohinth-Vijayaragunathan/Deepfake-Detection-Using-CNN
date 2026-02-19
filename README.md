@@ -1,77 +1,145 @@
-# AI Image Processing Pipeline
+#  Deepfake Face Detection using MobileNetV2, EfficientNetV2 & Ensemble Learning
 
-A modular Python-based system for processing images, extracting deep learning features using a pre-trained Convolutional Neural Network (CNN), generating predictions, and storing results in a relational database.
-
----
-
-## Overview
-
-This application accepts an image as input, performs preprocessing, extracts semantic features using a CNN model, generates predictions, and stores the results along with metadata in a database.
-
-The architecture is modular and designed for easy extension into APIs or larger machine learning workflows.
+A deep learning–based web application that detects whether a face image is **REAL or FAKE (AI-generated)** using an **ensemble of MobileNetV2 and EfficientNetV2**.  
+The project includes **model training, transfer learning, Grad-CAM explainability, Gradio UI**, and **prediction logging**.
 
 ---
 
-## Key Features
+#  Features
 
-- Image preprocessing and normalization  
-- CNN-based feature extraction and prediction  
-- Database persistence with timestamps  
-- Clean and maintainable modular design  
-- Scalable for batch image processing  
+- Binary classification: **Real vs Fake faces**
+- Transfer learning using:
+  - MobileNetV2
+  - EfficientNetV2B0
+- **Ensemble model** (averaging predictions from both models)
+- **Grad-CAM visualization** for model explainability
+- **Gradio web interface** for real-time predictions
+- **Prediction logging to CSV**
+- Training with **data augmentation** and **learning rate scheduling**
 
 ---
 
-## System Workflow
+#  Project Workflow
 
-### 1. Input Layer
-- Accepts image files (`.jpg`, `.png`, etc.)
-- Validates file format
+## 1️ Dataset Preparation
 
-### 2. Preprocessing
-- Resize image to model input size (e.g., 224×224)  
-- Normalize pixel values  
-- Convert image to NumPy array / tensor  
+- Images stored in Google Drive
+- Structured into:
 
-### 3. Model Inference
-- Load pre-trained CNN model (e.g., MobileNet / ResNet)  
-- Perform forward pass  
-- Generate prediction and/or feature vector  
+train/
+├── real/
+└── fake/
 
-### 4. Persistence Layer
-Stores the following in the database:
 
-- File name  
-- Prediction result  
+- Automatic file organization using Python (`os`, `shutil`)
+
+---
+
+## 2️ Data Preprocessing
+
+- Image resizing → `224 × 224`
+- Normalization → pixel values scaled to `[0,1]`
+- Data augmentation:
+  - Horizontal flip
+- Train/validation split → **80/20**
+
+---
+
+## 3 Model Training
+
+### 🔹 MobileNetV2
+
+- Pretrained on ImageNet
+- Frozen base layers
+- Custom classification head:
+  - GlobalAveragePooling
+  - Dropout
+  - Dense (Sigmoid)
+
+### 🔹 EfficientNetV2B0
+
+- Transfer learning with custom top layers
+- Binary output using sigmoid activation
+
+---
+
+## 4️ Ensemble Learning
+
+- Shared input layer
+- Predictions from:
+  - MobileNetV2
+  - EfficientNetV2
+- Combined using **Average layer**
+- Final sigmoid output
+
+- Improves robustness and accuracy.
+
+---
+
+## 5️ Model Explainability (Grad-CAM)
+
+- Generates heatmaps highlighting:
+  - Regions influencing prediction
+- Helps visualize **why** the model predicts fake/real
+
+---
+
+## 6️ Web Application (Gradio)
+
+Users can:
+
+- Upload a face image
+- Get:
+  - Prediction (Real/Fake)
+  - Confidence score
+  - Grad-CAM heatmap
+
+---
+
+## 7️ Prediction Logging
+
+Each prediction is saved to:
+
+Fields:
+
 - Timestamp  
+- Image name  
+- Prediction  
+- Confidence  
 
 ---
 
-## Project Structure
-
-AI-Image-Processing/
-│── main.py # Application entry point
-│── image_processor.py # Image preprocessing and inference
-│── model_loader.py # CNN model loading
-│── database.py # Database connection and operations
-│── utils.py # Helper utilities
-│── input_images/ # Sample inputs
-│── output/ # Processed outputs (optional)
-│── requirements.txt
-│── README.md
-
-
----
-
-## Technologies Used
+#  Tech Stack
 
 - Python  
-- OpenCV  
-- NumPy  
 - TensorFlow / Keras  
-- Scikit-learn  
-- MySQL / SQLite  
+- MobileNetV2  
+- EfficientNetV2B0  
+- OpenCV  
+- NumPy / Pandas  
+- Matplotlib  
+- Gradio  
+- Google Colab  
 
 ---
 
+# 📂 Project Structure
 
+deepfake-face-detection/
+│
+├── models/
+│ ├── mobilenet_model.keras
+│ ├── efficientnet_model.h5
+│ └── safe_ensemble_model.keras
+│
+├── prediction_logs.csv
+├── app.py
+├── train.py
+├── gradcam.py
+├── requirements.txt
+└── README.md
+
+Sample Output
+
+Prediction: Fake
+Confidence: 94.27%
