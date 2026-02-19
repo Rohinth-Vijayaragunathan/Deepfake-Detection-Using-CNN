@@ -125,19 +125,19 @@ Fields:
 
 # 📂 Project Structure
 
-deepfake-face-detection/
-│
-├── models/
-│ ├── mobilenet_model.keras
-│ ├── efficientnet_model.h5
-│ └── safe_ensemble_model.keras
-│
+```
+deepfake-face-detection
+├── models
+│   ├── mobilenet_model.keras
+│   ├── efficientnet_model.h5
+│   └── safe_ensemble_model.keras
 ├── prediction_logs.csv
 ├── app.py
 ├── train.py
 ├── gradcam.py
 ├── requirements.txt
 └── README.md
+```
 
 Sample Output
 
